@@ -1,0 +1,31 @@
+{
+  "name": "coffeeDash",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest"
+  },
+  "dependencies": {
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "buffer": "^5.1.0",
+    "node-libs-browser": "^2.1.0",
+    "process": "^0.11.10",
+    "react": "16.6.0-alpha.8af6728",
+    "react-native": "0.55",
+    "react-native-swipe-navigation": "^1.0.0-beta",
+    "web3": "1.0.0-beta.33"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "^23.6.0",
+    "jest": "23.6.0",
+    "metro-react-native-babel-preset": "0.49.0",
+    "react-test-renderer": "16.6.0-alpha.8af6728"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
