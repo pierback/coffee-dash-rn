@@ -1,6 +1,7 @@
 import React from 'react'
 import { View, Text } from 'react-native'
 // import { randomHex } from 'web3-utils'
+import {PagerTabIndicator, IndicatorViewPager, PagerTitleIndicator, PagerDotIndicator} from 'rn-viewpager';
 
 class UserConsumption extends React.Component {
     constructor(props) {
@@ -21,6 +22,14 @@ class UserConsumption extends React.Component {
         });
     }
 
+    _renderTitleIndicator() {
+        return <PagerTitleIndicator titles={['one', 'two', 'three']} />;
+    }
+
+    _renderDotIndicator() {
+        return <PagerDotIndicator pageCount={3} />;
+    }
+    
     render() {
         const listuserConsumption = Object.values(this.state.userConsumption).map((val, index) => {
             return <Text key={index}/* {randomHex(5)} */>{Object.keys(val)}: {Object.values(val)}</Text>;
@@ -28,9 +37,22 @@ class UserConsumption extends React.Component {
         console.log('userConsumption: ', this.state.userConsumption);
 
         return (
-            <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ fontSize: 35, marginBottom: 20 }}>User Consumption</Text>
-                {listuserConsumption}
+            
+            <View style={{flex:1}}>
+                <IndicatorViewPager
+                    style={{height:200}}
+                    indicator={this._renderDotIndicator()}
+                >
+                    <View style={{backgroundColor:'cadetblue'}}>
+                        <Text>page one</Text>
+                    </View>
+                    <View style={{backgroundColor:'cornflowerblue'}}>
+                        <Text>page two</Text>
+                    </View>
+                    <View style={{backgroundColor:'#1AA094'}}>
+                        <Text>page three</Text>
+                    </View>
+                </IndicatorViewPager>
             </View>
         );
     }

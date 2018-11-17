@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>logFormatVersion</key>
+	<integer>9</integer>
+	<key>logs</key>
+	<dict>
+		<key>1A7C9586-5FE8-4907-A47E-60C6AD852E89</key>
+		<dict>
+			<key>className</key>
+			<string>IDECommandLineBuildLog</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>1A7C9586-5FE8-4907-A47E-60C6AD852E89.xcactivitylog</string>
+			<key>highLevelStatus</key>
+			<string>S</string>
+			<key>schemeIdentifier-containerName</key>
+			<string>coffeeDash project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>coffeeDash</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Building project coffeeDash with scheme coffeeDash and configuration Debug</string>
+			<key>timeStartedRecording</key>
+			<real>563029473.28211796</real>
+			<key>timeStoppedRecording</key>
+			<real>563029480.62351203</real>
+			<key>title</key>
+			<string>Building project coffeeDash with scheme coffeeDash and configuration Debug</string>
+			<key>uniqueIdentifier</key>
+			<string>1A7C9586-5FE8-4907-A47E-60C6AD852E89</string>
+		</dict>
+		<key>710ACFD1-514D-47BE-813A-284A4BEDC906</key>
+		<dict>
+			<key>className</key>
+			<string>IDECommandLineBuildLog</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>710ACFD1-514D-47BE-813A-284A4BEDC906.xcactivitylog</string>
+			<key>highLevelStatus</key>
+			<string>S</string>
+			<key>schemeIdentifier-containerName</key>
+			<string>coffeeDash project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>coffeeDash</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Building project coffeeDash with scheme coffeeDash and configuration Debug</string>
+			<key>timeStartedRecording</key>
+			<real>563028324.59070504</real>
+			<key>timeStoppedRecording</key>
+			<real>563028328.949018</real>
+			<key>title</key>
+			<string>Building project coffeeDash with scheme coffeeDash and configuration Debug</string>
+			<key>uniqueIdentifier</key>
+			<string>710ACFD1-514D-47BE-813A-284A4BEDC906</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

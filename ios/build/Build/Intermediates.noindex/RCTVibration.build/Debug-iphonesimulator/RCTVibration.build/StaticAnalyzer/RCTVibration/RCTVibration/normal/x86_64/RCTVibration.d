@@ -1,0 +1,5 @@
+dependencies: \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/node_modules/react-native/Libraries/Vibration/RCTVibration.m \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/node_modules/react-native/Libraries/Vibration/RCTVibration.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTBridgeModule.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTDefines.h

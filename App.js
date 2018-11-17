@@ -9,17 +9,41 @@ import {
   Platform,
   StyleSheet,
   Text,
-  View
+  View,
 } from 'react-native';
-import Navigator from './Navigator'
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import {
+  PagerTabIndicator, IndicatorViewPager, PagerTitleIndicator, PagerDotIndicator,
+} from 'rn-viewpager';
+import {
+  ButtonGroup,
+  Header,
+} from 'react-native-elements';
+import Navigator from './components/Navigator';
 
+import TabMap from './components/TabMap';
+import NotifService from './components/NotifService';
+import Loader from './components/Loader';
 
 const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
+  ios: 'Press Cmd+R to reload,\n'
+    + 'Cmd+D or shake for dev menu',
+  android: 'Double tap R on your keyboard to reload,\n'
+    + 'Shake or press menu button for dev menu',
 });
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    height: '100%',
+    width: '100%',
+  },
+  footer: {
+    position: 'absolute', left: 0, right: 0, bottom: 0,
+  },
+});
+
 
 export default class App extends Component {
   constructor(props) {
@@ -27,23 +51,20 @@ export default class App extends Component {
     this.state = {
       ready: '',
       consumption: '',
-    }
+    };
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <Navigator />
+        <Header style={{ paddingBottom: 25 }} centerComponent={{ text: 'Coffee Mate', style: { color: '#fff', fontSize: 25 } }} />
+        {/* <Navigator /> */}
+        <TabMap />
+        <Loader />
       </View>
     );
   }
-
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 const styles2 = StyleSheet.create({
   container: {
@@ -56,7 +77,7 @@ const styles2 = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
     margin: 10,
-    marginBottom: 50
+    marginBottom: 50,
   },
   instructions: {
     textAlign: 'center',

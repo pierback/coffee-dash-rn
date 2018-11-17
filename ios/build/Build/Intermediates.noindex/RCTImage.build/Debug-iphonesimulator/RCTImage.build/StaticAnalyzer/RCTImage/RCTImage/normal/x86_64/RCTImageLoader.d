@@ -1,0 +1,29 @@
+dependencies: \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/node_modules/react-native/Libraries/Image/RCTImageLoader.m \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTConvert.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTAnimationType.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTBorderStyle.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTDefines.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTLog.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTAssert.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTUtils.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTPointerEvents.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTTextDecorationLineType.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/yoga/Yoga.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/yoga/YGEnums.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/yoga/YGMacros.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTImageLoader.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTBridge.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTBridgeDelegate.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTJavaScriptLoader.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTBridgeModule.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTFrameUpdate.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTInvalidating.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTResizeMode.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTURLRequestHandler.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTURLRequestDelegate.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTNetworking.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTEventEmitter.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTNetworkTask.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/node_modules/react-native/Libraries/Image/RCTImageCache.h \
+  /Users/fabianpieringer/Projects/coffee-dash-rn/node_modules/react-native/Libraries/Image/RCTImageUtils.h
