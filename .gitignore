@@ -69,3 +69,7 @@ package-lock.json
 # ReactCommon subdir shouldn't have Xcode project
 /ReactCommon/**/*.xcodeproj
 RNTester/build
+ios/Index/DataStore/v5/units/JSBundleType.o-BY6CAZV648V0
+ios/*
+./android/**
+**/ios/Index/*

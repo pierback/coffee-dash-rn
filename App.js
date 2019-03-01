@@ -19,10 +19,8 @@ import {
   ButtonGroup,
   Header,
 } from 'react-native-elements';
-import Navigator from './components/Navigator';
-
 import TabMap from './components/TabMap';
-import NotifService from './components/NotifService';
+import web3Init from './components/web3Init';
 import Loader from './components/Loader';
 
 const instructions = Platform.select({
@@ -57,7 +55,11 @@ export default class App extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Header style={{ paddingBottom: 25 }} centerComponent={{ text: 'Coffee Mate', style: { color: '#fff', fontSize: 25 } }} />
+        <Header
+          centerComponent={{ text: 'Coffee Mate', style: { color: 'black', fontSize: 25 } }}
+          statusBarProps={{ barStyle: 'light-content' }}
+          containerStyle={{ backgroundColor: 'white' }}
+        />
         {/* <Navigator /> */}
         <TabMap />
         <Loader />

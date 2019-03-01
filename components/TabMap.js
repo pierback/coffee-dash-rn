@@ -1,47 +1,58 @@
+// @ts-check
 import * as React from 'react';
 import {
-  View, StyleSheet, Dimensions, Text,
+  StyleSheet, Dimensions,
 } from 'react-native';
 import {
   TabView, TabBar, SceneMap, PagerPan,
 } from 'react-native-tab-view';
+
+import Icon from 'react-native-vector-icons/FontAwesome';
 import Map from './Map';
 import OverallConsumption from './OverallConsumption';
 import UserConsumption from './UserConsumption';
 
-const FirstRoute = () => (
-  <Map />
-);
-const SecondRoute = () => (
-  <View style={[styles.scene, { backgroundColor: 'white' }]}>
-    <Text>asdf</Text>
-  </View>
-);
-
 export default class TabMap extends React.Component {
   state = {
-    index: 0,
+    index: 1,
     routes: [
-      { key: 'first', title: 'First' },
-      { key: 'second', title: 'Second' },
+      { key: 'third', icon: 'bar-chart' },
+      { key: 'first', icon: 'coffee' },
+      { key: 'second', icon: 'user' },
     ],
   };
 
   _renderPager = props => <PagerPan {...props} />;
+
+  _renderIcon = ({ route }) => (
+    <Icon name={route.icon} size={24} style={styles.icon} />
+  );
+
+  renderTabBar = props => (
+    <TabBar
+      {...props}
+      renderIcon={this._renderIcon}
+      indicatorStyle={{ backgroundColor: 'black' }}
+      style={{ backgroundColor: 'white' }}
+    />
+  );
 
   render() {
     return (
       <TabView
         navigationState={this.state}
         renderScene={SceneMap({
-          first: FirstRoute,
-          second: SecondRoute,
+          third: OverallConsumption,
+          first: Map,
+          second: UserConsumption,
         })}
         tabBarPosition="bottom"
         onIndexChange={index => this.setState({ index })}
         initialLayout={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height }}
         swipeEnabled={false}
+        renderTabBar={this.renderTabBar}
       />
+
     );
   }
 }
@@ -49,5 +60,8 @@ export default class TabMap extends React.Component {
 const styles = StyleSheet.create({
   scene: {
     flex: 1,
+  },
+  icon: {
+    color: 'black',
   },
 });

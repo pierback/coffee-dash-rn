@@ -6,7 +6,7 @@
 	<integer>9</integer>
 	<key>logs</key>
 	<dict>
-		<key>46C19AFE-50EB-4AC2-B8DE-88EAFD1034D3</key>
+		<key>5601E394-3790-4E54-BE35-E241AEE929D3</key>
 		<dict>
 			<key>className</key>
 			<string>IDECommandLineBuildLog</string>
@@ -15,7 +15,7 @@
 			<key>domainType</key>
 			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
 			<key>fileName</key>
-			<string>46C19AFE-50EB-4AC2-B8DE-88EAFD1034D3.xcactivitylog</string>
+			<string>5601E394-3790-4E54-BE35-E241AEE929D3.xcactivitylog</string>
 			<key>highLevelStatus</key>
 			<string>S</string>
 			<key>schemeIdentifier-containerName</key>
@@ -27,13 +27,13 @@
 			<key>signature</key>
 			<string>Building project coffeeDash with scheme coffeeDash and configuration Debug</string>
 			<key>timeStartedRecording</key>
-			<real>564159037.78938401</real>
+			<real>564244288.30480897</real>
 			<key>timeStoppedRecording</key>
-			<real>564159042.418872</real>
+			<real>564244293.31099701</real>
 			<key>title</key>
 			<string>Building project coffeeDash with scheme coffeeDash and configuration Debug</string>
 			<key>uniqueIdentifier</key>
-			<string>46C19AFE-50EB-4AC2-B8DE-88EAFD1034D3</string>
+			<string>5601E394-3790-4E54-BE35-E241AEE929D3</string>
 		</dict>
 	</dict>
 </dict>

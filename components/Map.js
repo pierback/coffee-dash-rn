@@ -23,6 +23,11 @@ import {
 } from 'react-native-elements';
 import { IndicatorViewPager, PagerDotIndicator } from 'rn-viewpager';
 
+const matePic = require('../images/cmate.jpeg');
+const waterPic = require('../images/justwater.jpeg');
+const coffeePic = require('../images/justcoffee.jpg');
+
+
 const { width, height } = Dimensions.get('window');
 /* login = new Login(web3, userController, app);
 register = new Register(web3, userController);
@@ -47,7 +52,7 @@ function startWebsocket() {
   ws.onmessage = (e) => {
     // a message was received
     console.log('on messeage', e.data);
-    NotificationsAndroid.localNotification({ title: 'Coffee Time ☕️☕️☕️', body: "You must be exhausted with all the work you've already done today!" });
+    NotificationsAndroid.localNotification({ title: 'Coffee Time ☕', body: 'Take a break!' });
   };
 
   ws.onerror = (e) => {
@@ -75,17 +80,17 @@ class Map extends React.Component {
   async insertCoffee() {
     global.loading = true;
     this.setState({ loading: true });
-    // setTimeout(() => this.setState({ loading: false }), 3000);
-    setTimeout(() => { global.loading = false; }, 3000);
-    return;
+
+    // setTimeout(() => { this.setState({ loading: false })}, 3000);
+    // setTimeout(() => { global.loading = false; }, 3000);
+
     global.insertCoffee.task('fabp_92@hotmail.de')
       .then(() => {
-        // this.setState global.loading = falses.setState({ loading: false });
-        this.props.nav.navigateRight();
+        this.setState({ loading: false });
+        this.setState({ index: 2 });
       })
       .catch(() => {
         this.setState({ loading: false });
-        this.props.nav.navigateRight();
       });
   }
 
@@ -93,19 +98,29 @@ class Map extends React.Component {
     return (
 
       <View style={{
-        height: '95%', flex: 1, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center', borderColor: 'gray', borderWidth: 1,
+        height: '100%', flex: 1, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center', borderColor: 'gray', borderWidth: 1,
       }}
       >
+        <Overlay
+          isVisible={this.state.loading}
+          windowBackgroundColor="rgba(255, 255, 255, .5)"
+          overlayBackgroundColor="gray"
+          width="auto"
+          height="auto"
+        >
+          <ActivityIndicator size="large" color="black" />
+        </Overlay>
         <View style={{
-          width: '100%', flex: 1, flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'space-around',
+          width: '100%', flex: 1, flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'space-around', paddingTop: 30,
         }}
         >
-          <Card
-            title="Club Mate"
-            image={require('../images/cmate.jpeg')}
-            style={{ height: '150px' }}
-            onPress={this.insertCoffee}
-          >
+          <TouchableOpacity onPress={this.insertCoffee}>
+            <Card
+              title="Club Mate"
+              image={matePic}
+              containerStyle={{ width: 100, height: 220 }}
+            >
+              {/*
             <Button
               backgroundColor="#03A9F4"
               buttonStyle={{
@@ -113,23 +128,27 @@ class Map extends React.Component {
               }}
               onPress={this.insertCoffee}
               title="DRINK"
-            />
-          </Card>
+            /> */}
+            </Card>
+          </TouchableOpacity>
 
-          <Card
-            title="Water"
-            image={require('../images/justwater.jpeg')}
-            style={{ width: '180%' }}
-          >
-            <Button
+
+          <TouchableOpacity onPress={this.insertCoffee}>
+            <Card
+              title="Water"
+              image={waterPic}
+              containerStyle={{ width: 100, height: 220 }}
+            >
+              {/* <Button
               backgroundColor="#03A9F4"
               buttonStyle={{
                 borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0,
               }}
               onPress={this.insertCoffee}
               title="DRINK"
-            />
-          </Card>
+            /> */}
+            </Card>
+          </TouchableOpacity>
         </View>
 
         {/*  {this.state.loading &&
@@ -139,20 +158,23 @@ class Map extends React.Component {
           </View>
         } */}
 
-        <Card
-          containerStyle={{ width: '70%', marginBottom: 50 }}
-          title="Coffee"
-          image={require('../images/justcoffee.jpg')}
-        >
-          <Button
-            backgroundColor="#03A9F4"
-            buttonStyle={{
-              borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0,
-            }}
-            onPress={this.insertCoffee}
-            title="DRINK"
-          />
-        </Card>
+        <TouchableOpacity onPress={this.insertCoffee} style={{ paddingBottom: 30 }}>
+          <Card
+            containerStyle={{ width: '70%', marginBottom: 20 }}
+            title="Coffee"
+            image={coffeePic}
+            containerStyle={{ width: 300, height: 220 }}
+          >
+            {/* <Button
+              backgroundColor="#03A9F4"
+              buttonStyle={{
+                borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0,
+              }}
+              onPress={this.insertCoffee}
+              title="DRINK"
+            /> */}
+          </Card>
+        </TouchableOpacity>
       </View>
     );
   }
