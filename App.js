@@ -1,66 +1,77 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
 import {
-  Platform,
-  StyleSheet,
-  Text,
-  View
+  StyleSheet, Text, View, Button,
 } from 'react-native';
-import Navigator from './Navigator'
-
-
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+import {
+  payCoffee,
+  payMate,
+  payWater,
+  getChairBalance,
+  getOwnBalance,
+} from './bchain/cffcn';
+import { setDrinkData } from './bchain/bvrglst';
+import './bchain/web3Init';
 
 export default class App extends Component {
   constructor(props) {
     super(props);
+    this.paycoffee = this.paycoffee.bind(this);
     this.state = {
-      ready: '',
-      consumption: '',
-    }
+      chairBalance: '',
+      ownBalance: '',
+    };
   }
 
+  componentDidMount() {
+  }
+
+  paycoffee() {
+    payCoffee().then(() => {
+      getOwnBalance().then((externalData) => {
+        console.log('ownBalance:', externalData);
+        this.setState({ ownBalance: externalData });
+      });
+      getChairBalance().then((externalData) => {
+        console.log('chairBalance:', externalData);
+        this.setState({ chairBalance: externalData });
+      });
+    });
+    setDrinkData('coffee');
+  }
+
+  /* eslint-disable */
   render() {
-    return (
-      <View style={styles.container}>
-        <Navigator />
+    return (  
+      <View style={styles.container}> 
+        {/* <Navigator /> */}
+        <Text style={styles.text}>{`Chair Balance:${
+          this.state.chairBalance
+        }`}</Text>
+        <Button
+          style={{ height: 100, marginTop: 10 }}
+          onPress={this.paycoffee}
+          title="Coffee"
+          accessibilityLabel="Learn more about this purple button"
+        />
+        <Text style={styles.text}>{`Own Balance:${
+          this.state.ownBalance
+        }`}</Text>
       </View>
     );
   }
-
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F5FCFF"
   },
-});
-
-const styles2 = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
+  text: {
+    fontSize: 100,
+    textAlign: "center",
     margin: 10,
     marginBottom: 50
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+  }
 });
