@@ -15,6 +15,7 @@ async function getServerIP() {
     setTimeout(() => {
       resolve('192.168.178.34');
     }, 3000);
+
     socket.on('message', (message, rinfo) => {
       console.info(`Message from: ${rinfo.address}:${rinfo.port} - ${message}`);
       if (message) {

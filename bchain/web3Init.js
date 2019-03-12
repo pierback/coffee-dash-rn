@@ -14,14 +14,12 @@ const web3 = new Web3();
   this.fetch(`${downloadIP}/cc.json`)
     .then(response => response.json())
     .then(({ address, abi }) => {
-      console.log('address, abi : ', address, abi);
       startCC(web3, address, abi);
     });
 
   this.fetch(`${downloadIP}/bvgl.json`)
     .then(response => response.json())
     .then(({ address, abi }) => {
-      console.log('address, abi : ', address, abi);
       startBvgl(web3, address, abi);
     });
 }());

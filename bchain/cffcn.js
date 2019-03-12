@@ -6,10 +6,10 @@ async function startCC(web3, address, abi) {
   console.log('startCC deployedInstance: ', deployedInstance);
 }
 
-async function getChairBalance() {
+async function getChairBalance(address) {
   return new Promise(resolve => deployedInstance.methods
     .getChairBalance()
-    .call({ from: '0xe8816898d851d5b61b7f950627d04d794c07ca37' })
+    .call({ from: address })
     .then((result) => {
       console.log('getChairBalance: %s \n', JSON.stringify(result));
       resolve(JSON.stringify(result));
@@ -20,10 +20,10 @@ async function getChairBalance() {
     }));
 }
 
-async function getOwnBalance() {
+async function getOwnBalance(address) {
   return new Promise(resolve => deployedInstance.methods
     .getOwnBalance()
-    .call({ from: '0xe8816898d851d5b61b7f950627d04d794c07ca37' })
+    .call({ from: address })
     .then((result) => {
       console.log('getOwnBalance: %s \n', JSON.stringify(result));
       resolve(JSON.stringify(result));
@@ -34,11 +34,11 @@ async function getOwnBalance() {
     }));
 }
 
-async function payCoffee() {
+async function payCoffee(address) {
   return new Promise((resolve, reject) => deployedInstance.methods
     .payCoffee()
     .send({
-      from: '0xe8816898d851d5b61b7f950627d04d794c07ca37',
+      from: address,
       gas: 2300000,
     })
     .on('transactionHash', (hash) => {
@@ -54,11 +54,11 @@ async function payCoffee() {
     }));
 }
 
-async function payMate() {
+async function payMate(address) {
   return new Promise((resolve, reject) => deployedInstance.methods
     .payMate()
     .send({
-      from: '0xe8816898d851d5b61b7f950627d04d794c07ca37',
+      from: address,
       gas: 2300000,
     })
     .on('transactionHash', (hash) => {
@@ -74,11 +74,11 @@ async function payMate() {
     }));
 }
 
-async function payWater() {
+async function payWater(address) {
   return new Promise((resolve, reject) => deployedInstance.methods
     .payWater()
     .send({
-      from: '0xe8816898d851d5b61b7f950627d04d794c07ca37',
+      from: address,
       gas: 2300000,
     })
     .on('transactionHash', (hash) => {
@@ -94,12 +94,12 @@ async function payWater() {
     }));
 }
 
-async function transferGasEstimate() {
+async function transferGasEstimate(address) {
   console.log('transferGasEstimate: ');
   return new Promise((resolve, reject) => deployedInstance.methods
     .transfer('18ef96d887954472de5e9f47d60ba8dea371dbfe', 2)
     .estimateGas({
-      from: '0xe8816898d851d5b61b7f950627d04d794c07ca37',
+      from: address,
       gas: 5000000,
     })
     .then(gasAmount => resolve(gasAmount))
@@ -109,13 +109,13 @@ async function transferGasEstimate() {
     }));
 }
 
-async function transfer(gasAmount) {
+async function transfer(gasAmount, address) {
   console.log('transfer: ');
   return new Promise((resolve, reject) => {
     deployedInstance.methods
       .transfer('18ef96d887954472de5e9f47d60ba8dea371dbfe', 2)
       .send({
-        from: '0xe8816898d851d5b61b7f950627d04d794c07ca37',
+        from: address,
         gas: gasAmount,
       })
       .on('transactionHash', (hash) => {

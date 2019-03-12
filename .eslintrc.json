@@ -17,9 +17,11 @@
         "sourceType": "module"
     },
     "plugins": [
-        "react"
+        "react",
+        "react-hooks"
     ],
     "rules": {
-        "no-use-before-define":"off"
+        "no-use-before-define":"off",
+        "react-hooks/rules-of-hooks": "error"
     }
 }

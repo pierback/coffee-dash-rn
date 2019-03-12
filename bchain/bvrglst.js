@@ -10,9 +10,8 @@ async function startBvgl(web3, address, abi) {
   console.log('startBvgl deployedInstance: ', deployedInstance);
 }
 
-
-async function setDrinkData(_drink) {
-  const gasAmount = await setDrinkDataGasEstimate();
+async function setDrinkData(_drink, address) {
+  const gasAmount = await setDrinkDataGasEstimate(address);
   const time = fromAscii(moment(new Date()).format('YYYY-MM-DDTHH:mm:ss'));
   const weekday = fromAscii(days[new Date().getDay()]);
   const drink = fromAscii(_drink);
@@ -20,7 +19,7 @@ async function setDrinkData(_drink) {
   return new Promise((resolve, reject) => deployedInstance.methods
     .setDrinkData(time, drink, weekday)
     .send({
-      from: '0xe8816898d851d5b61b7f950627d04d794c07ca37',
+      from: address,
       gas: gasAmount,
     })
     .on('transactionHash', (hash) => {
@@ -52,7 +51,7 @@ function printEvent(receipt) {
   }
 }
 
-async function setDrinkDataGasEstimate() {
+async function setDrinkDataGasEstimate(address) {
   const fomat = moment(new Date()).format('YYYY-MM-DDTHH:mm:ss');
   const weekday = fromAscii('heuterrrrr');
   const drink = fromAscii('mateteter');
@@ -61,7 +60,7 @@ async function setDrinkDataGasEstimate() {
   return new Promise((resolve, reject) => {
     deployedInstance.methods
       .setDrinkData(time, drink, weekday)
-      .estimateGas({ from: '0xe8816898d851d5b61b7f950627d04d794c07ca37' })
+      .estimateGas({ from: address })
       .then(gasAmount => resolve(gasAmount))
       .catch((error) => {
         console.log('error: ', error);

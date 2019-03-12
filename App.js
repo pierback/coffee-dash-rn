@@ -1,7 +1,10 @@
+/* eslint-disable class-methods-use-this */
+/* eslint-disable no-restricted-syntax */
 import React, { Component } from 'react';
 import {
-  StyleSheet, Text, View, Button,
+  StyleSheet, Text, View, Picker,
 } from 'react-native';
+import { Header, Button, Overlay } from 'react-native-elements';
 import {
   payCoffee,
   payMate,
@@ -10,52 +13,117 @@ import {
   getOwnBalance,
 } from './bchain/cffcn';
 import { setDrinkData } from './bchain/bvrglst';
-import './bchain/web3Init';
+// import './bchain/web3Init';
+
+import NamePicker from './components/picker';
+import Drinks from './components/drinks';
+import Employes from './components/employes';
+
 
 export default class App extends Component {
   constructor(props) {
     super(props);
-    this.paycoffee = this.paycoffee.bind(this);
     this.state = {
-      chairBalance: '',
-      ownBalance: '',
+      isVisible: false,
     };
+
+    this.drinkCoffee = this.drinkCoffee.bind(this);
+    this.drinkMate = this.drinkMate.bind(this);
+    this.drinkWater = this.drinkWater.bind(this);
+    this.drink = this.drink.bind(this);
+    this.NamePicker = React.createRef();
+    // this.Drinks = React.createRef();
+    this.Employes = React.createRef();
   }
 
-  componentDidMount() {
+  drink() {
+    const { selections } = this.state;
+    const address = this.NamePicker.current.state.val;
+    const { mate, coffee, water } = this.Drinks.current.state.selections;
+
+    mate && this.drinkMate(address);
+    coffee && this.drinkCoffee(address);
+    water && this.drinkWater(address);
+
+    const sel = Object.keys(selections).reduce((acc, drink) => {
+      acc[drink] = false;
+      return acc;
+    }, {});
+
+    this.setState({ selections: sel, isVisible: true });
+    setTimeout(() => this.setState({ isVisible: false }), 6000);
   }
 
-  paycoffee() {
-    payCoffee().then(() => {
-      getOwnBalance().then((externalData) => {
+  drinkCoffee(address) {
+    payCoffee(address).then(() => {
+      console.log('payCoffee: ', payCoffee);
+      getOwnBalance(address).then((externalData) => {
         console.log('ownBalance:', externalData);
-        this.setState({ ownBalance: externalData });
       });
       getChairBalance().then((externalData) => {
         console.log('chairBalance:', externalData);
-        this.setState({ chairBalance: externalData });
       });
     });
-    setDrinkData('coffee');
+    setDrinkData('coffee', address);
+  }
+
+  drinkWater(address) {
+    payWater(address).then(() => {
+      console.log('payWater: ', payWater);
+      getOwnBalance(address).then((externalData) => {
+        console.log('ownBalance:', externalData);
+      });
+      getChairBalance().then((externalData) => {
+        console.log('chairBalance:', externalData);
+      });
+    });
+    setDrinkData('water', address);
+  }
+
+  drinkMate(address) {
+    payMate(address).then(() => {
+      console.log('payMate: ', payMate);
+      getOwnBalance(address).then((externalData) => {
+        console.log('ownBalance:', externalData);
+      });
+      getChairBalance().then((externalData) => {
+        console.log('chairBalance:', externalData);
+      });
+    });
+    setDrinkData('mate', address);
   }
 
   /* eslint-disable */
   render() {
-    return (  
-      <View style={styles.container}> 
-        {/* <Navigator /> */}
-        <Text style={styles.text}>{`Chair Balance:${
-          this.state.chairBalance
-        }`}</Text>
-        <Button
-          style={{ height: 100, marginTop: 10 }}
-          onPress={this.paycoffee}
-          title="Coffee"
-          accessibilityLabel="Learn more about this purple button"
+    return (
+      <View style={styles.container}>
+        <Header
+          centerComponent={{
+            h5: true,
+            text: "Beverage List",
+            fontSize: 100,
+            style: { color: "#fff", fontSize: 30, marginBottom: 30 }
+          }}
         />
-        <Text style={styles.text}>{`Own Balance:${
-          this.state.ownBalance
-        }`}</Text>
+        {/* <Drinks ref={this.Drinks}/> */}
+        <Employes ref={this.Employes}/>
+        {/* <View
+          style={{ marginTop: 0, marginBottom: 100, width: 200, height: 20 }}
+        >
+          <Button
+            title="Drink"
+            onPress={this.drink}
+            titleStyle={styles.button}
+          />
+        </View> */}
+        <Overlay
+          isVisible={this.state.isVisible}
+          onBackdropPress={() => this.setState({ isVisible: false })}
+          width={450}
+          height={200}
+        >
+          <Text style={styles.text}>Cheers!{"\n"}✅</Text>
+        </Overlay>
       </View>
     );
   }
@@ -66,12 +134,29 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F5FCFF"
+    backgroundColor: "#F5FCFF",
+    flexDirection: "column",
+    justifyContent: "space-between"
+  },
+  cards: {
+    marginTop: 10,
+    flex: 1,
+    justifyContent: "space-around",
+    alignItems: "center",
+    backgroundColor: "#F5FCFF",
+    flexDirection: "row",
+    marginBottom: 0
   },
   text: {
-    fontSize: 100,
-    textAlign: "center",
-    margin: 10,
-    marginBottom: 50
+    fontSize: 70,
+    textAlign: "center"
+  },
+  overlay: {
+    width: 150,
+    height: 150,
+    fontSize: 100
+  },
+  button: {
+    fontSize: 20
   }
 });
