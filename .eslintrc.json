@@ -22,6 +22,12 @@
     ],
     "rules": {
         "no-use-before-define":"off",
-        "react-hooks/rules-of-hooks": "error"
+        "react-hooks/rules-of-hooks": "error",
+        "react/prop-types": "off", 
+        "react/no-array-index-key": "off", 
+        "react/jsx-filename-extension": "off", 
+        "react/destructuring-assignment": "off", 
+        "class-methods-use-this": "off", 
+
     }
 }

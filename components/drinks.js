@@ -1,9 +1,6 @@
-/* eslint-disable react/no-array-index-key */
-/* eslint-disable react/jsx-filename-extension */
-/* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
 import { StyleSheet, View } from 'react-native';
-import CardItem from './card2';
+import CardItem from './cardItem';
 
 const matePic = require('../images/cmate.jpeg');
 const waterPic = require('../images/water.jpg');
@@ -18,8 +15,6 @@ const drinkArr = [
 class Drinks extends Component {
   constructor(props) {
     super(props);
-    this.loadDrinks = this.loadDrinks.bind(this);
-    this.onChildToggle = this.onChildToggle.bind(this);
     this.state = {
       selections: {
         mate: false,
@@ -29,40 +24,41 @@ class Drinks extends Component {
     };
   }
 
-  onChildToggle(id, selected) {
-    console.log('onChildToggle: ', id, selected);
+  onToggle = (id) => {
     const { selections } = this.state;
 
-    const sel = Object.entries(selections).reduce((acc, [key, val]) => {
+    const newSelection = Object.entries(selections).reduce((acc, [key, val]) => {
       // if id equals key --> true && toggle val to unselect card
       acc[key] = id === key && !val;
-      console.log('reduce', key, val, id === key, !val);
       return acc;
     }, {});
 
-    this.setState({ selections: sel });
+    this.props.onSelection(newSelection[id]);
+
+    this.setState({ selections: newSelection });
   }
 
-  loadDrinks() {
+  loadDrinks = () => {
+    const { selections } = this.state;
     return React.Children.toArray(
-      drinkArr.map((item) => {
-        console.log('item: ', item);
-        return (
-          <CardItem
-            id={item[0]}
-            selected={this.state.selections[item[0]]}
-            onToggle={this.onChildToggle}
-            imgPath={item[2]}
-            title={item[1]}
-          />
-        );
-      }),
+      drinkArr.map(item => (
+        <CardItem
+          id={item[0]}
+          selected={selections[item[0]]}
+          onToggle={this.onToggle}
+          imgPath={item[2]}
+          title={item[1]}
+          style={{
+            height: 410,
+            width: 290,
+          }}
+        />
+      )),
     );
   }
 
   render() {
     return (
-      // eslint-disable-next-line react/jsx-filename-extension
       <View style={styles.cards}>{this.loadDrinks()}</View>
     );
   }

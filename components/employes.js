@@ -1,67 +1,54 @@
-/* eslint-disable react/no-array-index-key */
-/* eslint-disable react/jsx-filename-extension */
-/* eslint-disable class-methods-use-this */
-import React, { Component } from 'react';
-import { StyleSheet, View } from 'react-native';
-import CardItem from './card2';
+import React, { Component } from "react";
+import { StyleSheet, View } from "react-native";
+import CardItem from "./cardItem";
 
-const personPic = require('../images/person.jpg');
-
-const names = [
-  'Wenzel',
-  'Markus',
-  'Michael',
-  'Jörg',
-  'Toni',
-  'Karen',
-  'Dominik',
-  'David',
-];
+const personPic = require("../images/person.jpg");
 
 class Employes extends Component {
   constructor(props) {
     super(props);
-    this.loadEmployes = this.loadEmployes.bind(this);
-    this.onChildToggle = this.onChildToggle.bind(this);
     this.state = {
-      selections: {
-        mate: false,
-        coffee: false,
-        water: false,
-      },
+      names: {},
+      selected: null
     };
+    ({ names: this.state.names } = this.props);
   }
 
-  onChildToggle(id, selected) {
-    console.log('onChildToggle: ', id, selected);
-    const { selections } = this.state;
+  onToggle = id => {
+    const { names } = this.state;
 
-    const sel = Object.entries(selections).reduce((acc, [key, val]) => {
+    const newSelection = Object.entries(names).reduce((acc, [key, val]) => {
+      const name = key.toLocaleLowerCase();
       // if id equals key --> true && toggle val to unselect card
-      acc[key] = id === key && !val;
-      console.log('reduce', key, val, id === key, !val);
+      acc[name] = id === name && !val;
       return acc;
     }, {});
 
-    this.setState({ selections: sel });
-  }
+    this.props.onSelection(newSelection[id]);
+    this.setState({ names: newSelection, selected: id });
+  };
 
-  loadEmployes() {
+  nameCapitalized = name => name.charAt(0).toUpperCase() + name.slice(1);
+
+  loadEmployes = () => {
+    const { names } = this.state;
+
     return React.Children.toArray(
-      names.map((item) => {
-        console.log('item: ', item);
-        return (
-          <CardItem
-            id={item}
-            selected={this.state.selections[item]}
-            onToggle={this.onChildToggle}
-            imgPath={personPic}
-            title={item}
-          />
-        );
-      }),
+      Object.keys(names).map(item => (
+        <CardItem
+          id={item}
+          selected={names[item]}
+          onToggle={this.onToggle}
+          imgPath={personPic}
+          title={this.nameCapitalized(item)}
+          style={{
+            height: 220,
+            width: 150
+          }}
+        />
+      ))
     );
-  }
+  };
 
   render() {
     return (
@@ -75,12 +62,12 @@ const styles = StyleSheet.create({
   cards: {
     marginTop: 10,
     flex: 1,
-    justifyContent: 'space-around',
-    backgroundColor: '#F5FCFF',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 0,
-  },
+    justifyContent: "space-around",
+    backgroundColor: "#F5FCFF",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginBottom: 0
+  }
 });
 
 export default Employes;

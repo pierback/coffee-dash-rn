@@ -1,128 +1,111 @@
-/* eslint-disable class-methods-use-this */
-/* eslint-disable no-restricted-syntax */
-import React, { Component } from 'react';
-import {
-  StyleSheet, Text, View, Picker,
-} from 'react-native';
-import { Header, Button, Overlay } from 'react-native-elements';
-import {
-  payCoffee,
-  payMate,
-  payWater,
-  getChairBalance,
-  getOwnBalance,
-} from './bchain/cffcn';
-import { setDrinkData } from './bchain/bvrglst';
-// import './bchain/web3Init';
-
-import NamePicker from './components/picker';
-import Drinks from './components/drinks';
-import Employes from './components/employes';
-
+import React, { Component } from "react";
+import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
+import { Overlay } from "react-native-elements";
+import { payCoffee, payMate, payWater } from "./bchain/cffcn";
+import { setDrinkData } from "./bchain/bvrglst";
+import { checkNewDeployment, initWeb3 } from "./bchain/web3Init";
+import EmpContainer from "./components/empContainer";
+import DrinksContainer from "./components/drinksContainer";
+import HeaderComp from "./components/headerComp";
 
 export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isVisible: false,
+      drinksVisible: false,
+      pickedAddress: "",
+      uniqueValue: 0,
+      loading: true,
+      apiCall: false
     };
-
-    this.drinkCoffee = this.drinkCoffee.bind(this);
-    this.drinkMate = this.drinkMate.bind(this);
-    this.drinkWater = this.drinkWater.bind(this);
-    this.drink = this.drink.bind(this);
-    this.NamePicker = React.createRef();
-    // this.Drinks = React.createRef();
-    this.Employes = React.createRef();
+  }
+  async componentWillMount() {
+    await initWeb3();
+    this.setState({ loading: false });
   }
 
-  drink() {
-    const { selections } = this.state;
-    const address = this.NamePicker.current.state.val;
-    const { mate, coffee, water } = this.Drinks.current.state.selections;
+  submit = async (drinksProp) => {
+    const { pickedAddress } = this.state;
+    const { mate, coffee, water } = drinksProp;
 
-    mate && this.drinkMate(address);
-    coffee && this.drinkCoffee(address);
-    water && this.drinkWater(address);
+    mate && this.drinkMate(pickedAddress);
+    coffee && this.drinkCoffee(pickedAddress);
+    water && this.drinkWater(pickedAddress);
 
-    const sel = Object.keys(selections).reduce((acc, drink) => {
-      acc[drink] = false;
-      return acc;
-    }, {});
+    this.setState({ isVisible: true, apiCall: true });
+    await checkNewDeployment();
+    this.setState({ loading: false, apiCall: false });
+    this.tmout = setTimeout(this.reloadInterface, 4000);
+  };
 
-    this.setState({ selections: sel, isVisible: true });
-    setTimeout(() => this.setState({ isVisible: false }), 6000);
-  }
+  reloadInterface = async () => {
+    console.log("reloadInterface");
+    this.forceRemount();
+    this.setState({ drinksVisible: false, isVisible: false });
+    if (this.state.apiCall) {
+      this.setState({ loading: true });
+    }
+  };
 
-  drinkCoffee(address) {
+  next = pickedAddress => {
+    this.setState({ drinksVisible: true, pickedAddress });
+  };
+
+  drinkCoffee = address => {
     payCoffee(address).then(() => {
-      console.log('payCoffee: ', payCoffee);
-      getOwnBalance(address).then((externalData) => {
-        console.log('ownBalance:', externalData);
-      });
-      getChairBalance().then((externalData) => {
-        console.log('chairBalance:', externalData);
-      });
+      setDrinkData("coffee", address);
     });
-    setDrinkData('coffee', address);
-  }
+  };
 
-  drinkWater(address) {
+  drinkWater = address => {
     payWater(address).then(() => {
-      console.log('payWater: ', payWater);
-      getOwnBalance(address).then((externalData) => {
-        console.log('ownBalance:', externalData);
-      });
-      getChairBalance().then((externalData) => {
-        console.log('chairBalance:', externalData);
-      });
+      setDrinkData("water", address);
     });
-    setDrinkData('water', address);
-  }
+  };
 
-  drinkMate(address) {
+  drinkMate = address => {
     payMate(address).then(() => {
-      console.log('payMate: ', payMate);
-      getOwnBalance(address).then((externalData) => {
-        console.log('ownBalance:', externalData);
-      });
-      getChairBalance().then((externalData) => {
-        console.log('chairBalance:', externalData);
-      });
+      setDrinkData("mate", address);
     });
-    setDrinkData('mate', address);
-  }
+  };
 
-  /* eslint-disable */
+  forceRemount = () => {
+    this.setState(({ uniqueValue }) => ({
+      uniqueValue: uniqueValue > 0 ? 1 : 0
+    }));
+    clearTimeout(this.tmout);
+  };
+
   render() {
+    const { uniqueValue, drinksVisible, isVisible, loading } = this.state;
+    const pages = drinksVisible ? (
+      <DrinksContainer ref={this.DrinksContainer} onSubmit={this.submit} />
+    ) : (
+      <EmpContainer ref={this.EmpContainer} onSubmit={this.next} />
+    );
+
+    const activity = (
+      <View style={{ flex: 3, justifyContent: "center" }}>
+        <ActivityIndicator size={40} color="#0000ff" />
+      </View>
+    );
+
     return (
-      <View style={styles.container}>
-        <Header
-          centerComponent={{
-            h5: true,
-            text: "Beverage List",
-            fontSize: 100,
-            style: { color: "#fff", fontSize: 30, marginBottom: 30 }
-          }}
-        />
-        {/* <Drinks ref={this.Drinks}/> */}
-        <Employes ref={this.Employes}/>
-        {/* <View
-          style={{ marginTop: 0, marginBottom: 100, width: 200, height: 20 }}
-        >
-          <Button
-            title="Drink"
-            onPress={this.drink}
-            titleStyle={styles.button}
-          />
-        </View> */}
+      <View style={styles.container} key={uniqueValue}>
+        <HeaderComp />
+        {!loading ? pages : activity}
+
         <Overlay
-          isVisible={this.state.isVisible}
-          onBackdropPress={() => this.setState({ isVisible: false })}
+          isVisible={isVisible}
+          onBackdropPress={this.reloadInterface}
           width={450}
           height={200}
         >
-          <Text style={styles.text}>Cheers!{"\n"}✅</Text>
+          <Text style={styles.text}>
+            Cheers!
+            {"\n"}✅
+          </Text>
         </Overlay>
       </View>
     );
@@ -135,8 +118,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#F5FCFF",
-    flexDirection: "column",
-    justifyContent: "space-between"
+    flexDirection: "column"
   },
   cards: {
     marginTop: 10,
