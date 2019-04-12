@@ -7,8 +7,10 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-native-community/async-storage": "^1.3.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
+    "base-64": "^0.1.0",
     "buffer": "^5.1.0",
     "eslint-plugin-react-hooks": "^1.5.0",
     "moment": "^2.24.0",
@@ -17,6 +19,7 @@
     "react": "^16.8.0",
     "react-native": "0.55",
     "react-native-elements": "^1.1.0",
+    "react-native-fs": "^2.13.3",
     "react-native-network-info": "^4.0.1",
     "react-native-udp": "^2.5.0",
     "react-native-vector-icons": "^6.3.0",
