@@ -53,9 +53,10 @@ async function createFile(filename, val) {
     console.log('createFile: ', path, val);
 
     return RNFS.writeFile(path, JSON.stringify(val), 'utf8')
-        .then(async (success) => {
+        .then((success) => {
             console.log('FILE WRITTEN!');
             // await uploadFile();
+            return path;
         })
         .catch((err) => {
             console.log(err.message);

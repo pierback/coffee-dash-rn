@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.3.0",
+    "@react-native-community/netinfo": "^2.0.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
     "base-64": "^0.1.0",

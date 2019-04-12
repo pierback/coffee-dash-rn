@@ -11,8 +11,8 @@ let prevBvgrlAddress;
 let downloadIP;
 
 async function initWeb3() {
-  // const ip = 'oc-appsrv01.informatik.uni-augsburg.de';// await determineIP();
-  const ip = '192.168.188.23';
+  const ip = 'oc-appsrv01.informatik.uni-augsburg.de';// await determineIP();
+  // const ip = '192.168.188.23';
   // const ip = await determineIP();
 
   downloadIP = `http://${ip}:9090/files`;

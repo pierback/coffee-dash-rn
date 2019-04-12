@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import React, { Component } from 'react';
 import {
-  StyleSheet, Text, View, ActivityIndicator,
+  StyleSheet, Text, View, ActivityIndicator, NetInfo,
 } from 'react-native';
 import { Overlay } from 'react-native-elements';
 import { payCoffee, payMate, payWater } from './bchain/cffcn';
@@ -21,8 +21,10 @@ export default class App extends Component {
       uniqueValue: 0,
       loading: true,
       apiCall: false,
+      isConnected: true,
     };
   }
+
 
   async componentWillMount() {
     await initWeb3()
@@ -34,20 +36,39 @@ export default class App extends Component {
     this.setState({ loading: false });
   }
 
+  componentDidMount() {
+    NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
+  }
+
+  handleConnectivityChange = async (isConnected) => {
+    if (isConnected) {
+      this.setState({ isConnected });
+      await initWeb3()
+        .catch(err => console.log('initWeb3', err));
+
+      await checkNewDeployment()
+        .catch(err => console.log('checkNewDeployment', err));
+    } else {
+      this.setState({ isConnected });
+    }
+  };
+
+
   submit = async (drinksProp) => {
     const { pickedAddress } = this.state;
     const { mate, coffee, water } = drinksProp;
 
     try {
+      this.setState({ isVisible: true, apiCall: true });
+      this.tmout = setTimeout(this.reloadInterface, 4000);
+
       mate && this.drinkMate(pickedAddress);
       coffee && this.drinkCoffee(pickedAddress);
       water && this.drinkWater(pickedAddress);
 
       await initWeb3();
 
-      this.setState({ isVisible: true, apiCall: true });
       this.setState({ loading: false, apiCall: false });
-      this.tmout = setTimeout(this.reloadInterface, 4000);
     } catch (error) {
       console.log('error on submit ', error);
     }
@@ -55,9 +76,10 @@ export default class App extends Component {
 
   reloadInterface = async () => {
     console.log('reloadInterface');
-    this.forceRemount();
     this.setState({ drinksVisible: false, isVisible: false });
-    if (this.state.apiCall) {
+    this.forceRemount();
+    // await initWeb3();
+    if (!this.state.isConnected) {
       this.setState({ loading: true });
     }
   };
@@ -67,18 +89,18 @@ export default class App extends Component {
   };
 
   drinkCoffee = async (address) => {
-    await payCoffee(address);
     await setDrinkData('coffee', address);
+    await payCoffee(address);
   };
 
   drinkWater = async (address) => {
-    await payWater(address);
     await setDrinkData('water', address);
+    await payWater(address);
   };
 
   drinkMate = async (address) => {
-    await payMate(address);
     await setDrinkData('mate', address);
+    await payMate(address);
   };
 
   forceRemount = () => {
@@ -123,7 +145,7 @@ export default class App extends Component {
           <Text style={styles.text}>
             Cheers!
             {'\n'}
-✅
+            ✅
           </Text>
         </Overlay>
       </View>
