@@ -61,7 +61,7 @@ async function callSmartContract(drinkdata, gasAmount, path) {
   return new Promise((resolve) => {
     const tmout = setTimeout(() => {
       resolve();
-    }, 10000);
+    }, 5000);
 
     return deployedInstance.methods
       .setDrinkData(fromAscii(time), drink, weekday)
@@ -87,7 +87,6 @@ async function execCachedTransactions(address) {
 
   for (const filePath of usrFiles) {
     const adrs = address || extractAddress(filePath);
-    console.log('adrs: ', adrs);
     await execTransaction(filePath, adrs);
   }
 }

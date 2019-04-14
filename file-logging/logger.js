@@ -1,4 +1,3 @@
-// require the module
 const RNFS = require('react-native-fs');
 
 function getFilePath(filename) {
@@ -87,7 +86,7 @@ async function uploadFile(filename) {
         },
     }).promise.then((response) => {
         if (response.statusCode == 200) {
-            console.log('FILES UPLOADED!'); // response.statusCode, response.headers, response.body
+            console.log('FILES UPLOADED!');
         } else {
             console.log('SERVER ERROR');
         }
