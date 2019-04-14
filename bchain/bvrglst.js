@@ -12,9 +12,9 @@ import {
 const moment = require('moment');
 const { fromAscii, hexToString } = require('web3-utils');
 
-let web3;
-
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+let web3;
 let deployedInstance;
 
 async function startBvgl(_web3, address, abi) {
