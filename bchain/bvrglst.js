@@ -1,7 +1,7 @@
-import AsyncStorage from '@react-native-community/async-storage';
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 import { NetInfo } from 'react-native';
 import {
-  deleteFile,
   readFile,
   createFile,
   getAllFiles,
@@ -19,7 +19,6 @@ let deployedInstance;
 
 async function startBvgl(_web3, address, abi) {
   // removeAllFiles();
-  // await AsyncStorage.clear();
   console.log('\nBeverageList Contract Address: %s\n', address.toString());
   deployedInstance = new _web3.eth.Contract(JSON.parse(abi), address.toString());
   web3 = _web3;
@@ -27,89 +26,126 @@ async function startBvgl(_web3, address, abi) {
 }
 
 async function setDrinkData(_drink, address) {
-  let gasAmount;
-  let time;
-  let weekday;
-  let drink;
-
   try {
-    gasAmount = await setDrinkDataGasEstimate(address);
-    time = moment(new Date()).format('YYYY-MM-DDTHH:mm:ss');
-    weekday = fromAscii(days[new Date().getDay()]);
-    drink = fromAscii(_drink);
+    const time = moment(new Date()).format('YYYY-MM-DDTHH:mm:ss');
+    const weekday = fromAscii(days[new Date().getDay()]);
+    const drink = fromAscii(_drink);
+    const gasAmount = await setDrinkDataGasEstimate({ address, time, weekday, drink });
 
     await execCachedTransactions(address);
 
-    writeToBchain({
-      address, time, drink, weekday,
-    }, gasAmount);
+    return writeToBchain({ address, time, drink, weekday }, gasAmount);
   } catch (error) {
     return Promise.resolve();
   }
 }
 
 async function writeToBchain(drinkdata, gasAmount) {
-  const {
-    address, time, drink, weekday,
-  } = drinkdata;
-
+  const { address, time } = drinkdata;
   const path = await createFile(`${address}-${time}.json`, drinkdata);
   const isConnected = await NetInfo.isConnected.fetch();
+  console.log('isConnected: ', isConnected);
 
-  if (!isConnected) {
-    return Promise.resolve();
-  }
+  return !isConnected
+    ? Promise.resolve()
+    : web3.eth.net.isListening()
+      .then(async () => {
+        await callSmartContract(drinkdata, gasAmount, path);
+      })
+      .catch(Promise.resolve);
+}
 
-  return new Promise((resolve, reject) => web3.eth.net.isListening()
-    .then(async () => {
-      const tmout = setTimeout(() => {
+async function callSmartContract(drinkdata, gasAmount, path) {
+  const { address, time, drink, weekday } = drinkdata;
+
+  return new Promise((resolve) => {
+    const tmout = setTimeout(() => {
+      resolve();
+    }, 10000);
+
+    return deployedInstance.methods
+      .setDrinkData(fromAscii(time), drink, weekday)
+      .send({ from: address, gas: gasAmount })
+      .on('receipt', async (receipt) => {
+        printEvent(receipt);
+        await removeFile(path);
+        clearTimeout(tmout);
         resolve();
-      }, 5000);
-
-      return deployedInstance.methods
-        .setDrinkData(fromAscii(time), drink, weekday)
-        .send({
-          from: address,
-          gas: gasAmount,
-        })
-        .on('transactionHash', (hash) => {
-          console.log('hash: ', hash);
-        })
-        .on('receipt', async (receipt) => {
-          printEvent(receipt);
-          console.log('Starting over');
-          await removeFile(path);
-          clearTimeout(tmout);
-          resolve();
-        })
-        .on('error', (err) => {
-          resolve();
-          console.log('setDrinkData error: ', err);
-        });
-    }))
-    .catch(e => Promise.resolve());
+      })
+      .on('error', (err) => {
+        resolve();
+        console.log('setDrinkData error: ', err);
+      });
+  });
 }
 
 
 async function execCachedTransactions(address) {
   const keys = await getAllFiles();
-  const usrKeys = filterLocalFiles(keys, address);
-  console.log('filterLocalFiles: ', usrKeys);
+  const usrFiles = filterLocalFiles(keys, address);
+  console.log('\n filterLocalFiles:', usrFiles);
 
-  for (const key of usrKeys) {
-    await execTransaction(key, address);
+  for (const filePath of usrFiles) {
+    const adrs = address || extractAddress(filePath);
+    console.log('adrs: ', adrs);
+    await execTransaction(filePath, adrs);
+  }
+}
+
+async function execTransaction(path, address) {
+  try {
+    const fileVals = await readFile(path);
+    const gasAmount = await setDrinkDataGasEstimate({ address, ...fileVals });
+    await callSmartContract(fileVals, gasAmount, path);
+  } catch (e) {
+    console.log('e: ', e);
+  }
+}
+
+async function setDrinkDataGasEstimate({ address, time, weekday, drink }) {
+  return new Promise((resolve) => {
+    deployedInstance.methods
+      .setDrinkData(fromAscii(time), drink, weekday)
+      .estimateGas({ from: address })
+      .then(gasAmount => resolve(gasAmount))
+      .catch((error) => {
+        console.log('error: ', error);
+        resolve();
+      });
+  });
+}
+
+
+function printEvent(receipt) {
+  if (receipt.events) {
+    const {
+      Address, time, drink, weekday,
+    } = receipt.events.NewDrink.returnValues;
+    console.log('receipt:');
+    console.log('  Address', Address);
+    console.log('  time', hexToString(time));
+    console.log('  drink:', hexToString(drink));
+    console.log('  weekday: %s\n\n', hexToString(weekday));
+  } else {
+    console.log('receipt: %o \n\n', receipt);
   }
 }
 
 function filterLocalFiles(allFiles, address) {
   return allFiles
     .reduce((acc, key) => {
-      const adrs = extractAddress(key.path);
-
-      console.log('adrs: ', adrs, key.path);
-
-      if (adrs === address) {
-        acc.push(key.path);
+      // push only userspecific files
+      if (address) {
+        const adrs = extractAddress(key.path);
+        if (adrs === address) {
+          acc.push(key.path);
+        }
+      } else {
+        // no address push all files with usr name in it
+        const fileName = getFileName(key.path);
+        if (fileName.includes('-')) {
+          acc.push(key.path);
+        }
       }
       return acc;
     }, [])
@@ -145,57 +181,7 @@ function SortAsc(key1, key2) {
   return 0;
 }
 
-
-async function execTransaction(key, address) {
-  try {
-    const fileVals = await readFile(key);
-    const gasAmount = await setDrinkDataGasEstimate(address);
-    await writeToBchain(fileVals, gasAmount);
-    await removeFile(key);
-  } catch (e) {
-    console.log('e: ', e);
-  }
-}
-
-function printEvent(receipt) {
-  if (receipt.events) {
-    const {
-      Address, time, drink, weekday,
-    } = receipt.events.NewDrink.returnValues;
-    console.log('receipt:');
-    console.log('  Address', Address);
-    console.log('  time', hexToString(time));
-    console.log('  drink:', hexToString(drink));
-    console.log('  weekday: %s\n\n', hexToString(weekday));
-  } else {
-    console.log('receipt: %o \n\n', receipt);
-  }
-}
-
-async function setDrinkDataGasEstimate(address) {
-  const fomat = moment(new Date()).format('YYYY-MM-DDTHH:mm:ss');
-  const weekday = fromAscii('heuterrrrr');
-  const drink = fromAscii('mateteter');
-  const time = fromAscii(fomat);
-
-
-  return new Promise((resolve, reject) => {
-    const tmout = setTimeout(() => {
-      resolve();
-    }, 5000);
-
-    deployedInstance.methods
-      .setDrinkData(time, drink, weekday)
-      .estimateGas({ from: address })
-      .then(gasAmount => resolve(gasAmount))
-      .catch((error) => {
-        console.log('error: ', error);
-        clearTimeout(tmout);
-        resolve();
-      });
-  });
-}
-
+// eslint-disable-next-line no-unused-vars
 async function watchEvents() {
   return deployedInstance.events
     .NewDrink({
@@ -209,40 +195,9 @@ async function watchEvents() {
     .on('error', err => console.log('Error on watching', err));
 }
 
-async function storeData(key, val) {
-  try {
-    console.log('storeData key: ', key);
-    await AsyncStorage.setItem(key, JSON.stringify(val));
-  } catch (e) {
-    // saving error
-    console.log('error on saving to keystorage', e);
-  }
-}
-
-
-async function getAllKeys() {
-  try {
-    return await AsyncStorage.getAllKeys();
-  } catch (e) {
-    // read key error
-  }
-  return [];
-}
-
-
-async function removeValue(key) {
-  try {
-    await AsyncStorage.removeItem(key);
-  } catch (e) {
-    // remove error
-  }
-
-  console.log('Done.');
-}
-
 module.exports = {
   startBvgl,
   setDrinkData,
-  getAllKeys,
   execTransaction,
+  execCachedTransactions,
 };

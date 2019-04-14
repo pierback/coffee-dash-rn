@@ -1,15 +1,15 @@
+/* eslint-disable import/named */
 /* eslint-disable no-unused-expressions */
 import React, { Component } from 'react';
-import {
-  StyleSheet, Text, View, ActivityIndicator, NetInfo,
-} from 'react-native';
-import { Overlay } from 'react-native-elements';
-import { payCoffee, payMate, payWater } from './bchain/cffcn';
-import { setDrinkData } from './bchain/bvrglst';
-import { checkNewDeployment, initWeb3 } from './bchain/web3Init';
+import { StyleSheet, View, NetInfo } from 'react-native';
+import { checkNewDeployment, initWeb3, Drink } from './bchain/web3Init';
+import { execCachedTransactions } from './bchain/bvrglst';
 import EmpContainer from './components/empContainer';
 import DrinksContainer from './components/drinksContainer';
 import HeaderComp from './components/headerComp';
+import ActivityComp from './components/activityItem';
+import OfflineText from './components/offlineText';
+import OverlayItem from './components/overlayItem';
 
 export default class App extends Component {
   constructor(props) {
@@ -20,20 +20,17 @@ export default class App extends Component {
       pickedAddress: '',
       uniqueValue: 0,
       loading: true,
-      apiCall: false,
       isConnected: true,
     };
   }
 
-
   async componentWillMount() {
-    await initWeb3()
-      .catch(err => console.log('initWeb3', err));
+    await this.initBchain();
+    const isConnected = await NetInfo.isConnected.fetch();
+    console.log('COMPONENTWILLMOUNT ISCONNECTED: ', isConnected);
 
-    await checkNewDeployment()
-      .catch(err => console.log('checkNewDeployment', err));
-
-    this.setState({ loading: false });
+    isConnected && await execCachedTransactions();
+    this.setState({ isConnected, loading: !isConnected });
   }
 
   componentDidMount() {
@@ -41,66 +38,57 @@ export default class App extends Component {
   }
 
   handleConnectivityChange = async (isConnected) => {
-    if (isConnected) {
-      this.setState({ isConnected });
-      await initWeb3()
-        .catch(err => console.log('initWeb3', err));
+    console.log('HANDLECONNECTIVITYCHANGE: ', isConnected);
 
-      await checkNewDeployment()
-        .catch(err => console.log('checkNewDeployment', err));
-    } else {
-      this.setState({ isConnected });
+    if (isConnected) {
+      await this.initBchain();
+      await execCachedTransactions();
     }
+    this.setState({ isConnected, loading: !isConnected });
   };
 
+  initBchain = async () => {
+    await initWeb3()
+      .catch(err => console.log('INITWEB3', err));
+
+    await checkNewDeployment()
+      .catch(err => console.log('CHECKNEWDEPLOYMENT', err));
+  }
 
   submit = async (drinksProp) => {
     const { pickedAddress } = this.state;
     const { mate, coffee, water } = drinksProp;
 
     try {
-      this.setState({ isVisible: true, apiCall: true });
+      this.setState({ isVisible: true });
       this.tmout = setTimeout(this.reloadInterface, 4000);
 
-      mate && this.drinkMate(pickedAddress);
-      coffee && this.drinkCoffee(pickedAddress);
-      water && this.drinkWater(pickedAddress);
+      mate && Drink('mate', pickedAddress);
+      coffee && Drink('coffee', pickedAddress);
+      water && Drink('water', pickedAddress);
 
       await initWeb3();
 
-      this.setState({ loading: false, apiCall: false });
+      this.setState({ loading: false });
     } catch (error) {
-      console.log('error on submit ', error);
+      console.log('ERROR ON SUBMIT', error);
     }
   };
 
   reloadInterface = async () => {
-    console.log('reloadInterface');
+    console.log('RELOADINTERFACE');
     this.setState({ drinksVisible: false, isVisible: false });
     this.forceRemount();
-    // await initWeb3();
+
     if (!this.state.isConnected) {
       this.setState({ loading: true });
+    } else {
+      await execCachedTransactions();
     }
   };
 
   next = (pickedAddress) => {
     this.setState({ drinksVisible: true, pickedAddress });
-  };
-
-  drinkCoffee = async (address) => {
-    await setDrinkData('coffee', address);
-    await payCoffee(address);
-  };
-
-  drinkWater = async (address) => {
-    await setDrinkData('water', address);
-    await payWater(address);
-  };
-
-  drinkMate = async (address) => {
-    await setDrinkData('mate', address);
-    await payMate(address);
   };
 
   forceRemount = () => {
@@ -114,40 +102,25 @@ export default class App extends Component {
     this.setState({ drinksVisible: false });
   };
 
+  currentPage = () => (this.state.drinksVisible ? (
+    <DrinksContainer ref={this.DrinksContainer} onSubmit={this.submit} />
+  ) : (
+    <EmpContainer ref={this.EmpContainer} onSubmit={this.next} />
+  ))
+
   render() {
     const {
-      uniqueValue, drinksVisible, isVisible, loading,
+      uniqueValue, drinksVisible, isVisible, loading, isConnected,
     } = this.state;
-    const pages = drinksVisible ? (
-      <DrinksContainer ref={this.DrinksContainer} onSubmit={this.submit} />
-    ) : (
-      <EmpContainer ref={this.EmpContainer} onSubmit={this.next} />
-    );
-
-    const activity = (
-      <View style={{ flex: 3, justifyContent: 'center' }}>
-        <ActivityIndicator size={40} color="#0000ff" />
-      </View>
-    );
 
     return (
       <View style={styles.container} key={uniqueValue}>
         <HeaderComp visible={drinksVisible} goBack={this.goBack} />
 
-        {!loading ? pages : activity}
+        {!isConnected ? <OfflineText /> : null}
+        {!loading ? this.currentPage() : <ActivityComp />}
 
-        <Overlay
-          isVisible={isVisible}
-          onBackdropPress={this.reloadInterface}
-          width={450}
-          height={200}
-        >
-          <Text style={styles.text}>
-            Cheers!
-            {'\n'}
-            ✅
-          </Text>
-        </Overlay>
+        <OverlayItem isVisible={isVisible} reloadInterface={this.reloadInterface} />
       </View>
     );
   }

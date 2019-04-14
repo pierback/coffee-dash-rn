@@ -14,7 +14,8 @@ async function removeAllFiles() {
 
 async function readFile(path) {
     const values = await RNFS.readFile(path, 'utf8');
-    console.log('values: ', values);
+    // console.log('readFile: ', path, values);
+
     try {
         return JSON.parse(values);
     } catch (error) {
@@ -24,49 +25,30 @@ async function readFile(path) {
 }
 
 async function getAllFiles() {
-    return RNFS.readDir(RNFS.DocumentDirectoryPath) // On Android, use "RNFS.DocumentDirectoryPath" (MainBundlePath is not defined)
-        .then((result) => {
-            console.log('GOT RESULT', result);
-            return result;
-            // stat the first file
-            return Promise.all([RNFS.stat(result[0].path), result[0].path]);
-        })
-        /* .then((statResult) => {
-            if (statResult[0].isFile()) {
-                // if we have a file, read it
-                return RNFS.readFile(statResult[1], 'utf8');
-            }
-
-            return 'no file';
-        })
-        .then((contents) => {
-            // log the file contents
-            console.log(contents);
-        }) */
-        .catch((err) => {
-            console.log(err.message, err.code);
-        });
+    try {
+        return RNFS.readDir(RNFS.DocumentDirectoryPath)
+    } catch (err) {
+        console.log(err.message, err.code);
+    }
 }
 
 async function createFile(filename, val) {
     const path = getFilePath(btoa(filename));
-    console.log('createFile: ', path, val);
+    // console.log('createFile: ', path, val);
 
-    return RNFS.writeFile(path, JSON.stringify(val), 'utf8')
-        .then((success) => {
-            console.log('FILE WRITTEN!');
-            // await uploadFile();
-            return path;
-        })
-        .catch((err) => {
-            console.log(err.message);
-        });
+    try {
+        await RNFS.writeFile(path, JSON.stringify(val), 'utf8');
+    } catch (err) {
+        console.log(err.message);
+    }
+
+    return path;
 }
 
 async function removeFile(path) {
     return RNFS.unlink(path)
         .then(() => {
-            console.log('FILE RMOVED');
+            console.log('FILE RMOVED', path);
         })
         // `unlink` will throw an error, if the item to unlink does not exist
         .catch((err) => {
