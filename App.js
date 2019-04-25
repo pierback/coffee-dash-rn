@@ -1,7 +1,8 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable import/named */
 /* eslint-disable no-unused-expressions */
 import React, { Component } from 'react';
-import { StyleSheet, View, NetInfo } from 'react-native';
+import { StyleSheet, View, NetInfo, Text } from 'react-native';
 import { checkNewDeployment, initWeb3, Drink } from './bchain/web3Init';
 import { execCachedTransactions } from './bchain/bvrglst';
 import EmpContainer from './components/empContainer';
@@ -22,14 +23,16 @@ export default class App extends Component {
       loading: true,
       isConnected: true,
     };
+    this._mounted = false;
   }
 
   async componentWillMount() {
-    await this.initBchain();
     const isConnected = await NetInfo.isConnected.fetch();
-    console.log('COMPONENTWILLMOUNT ISCONNECTED: ', isConnected);
-
-    isConnected && await execCachedTransactions();
+    if (isConnected) {
+      await this.initBchain();
+      await execCachedTransactions();
+      this._mounted = true;
+    }
     this.setState({ isConnected, loading: !isConnected });
   }
 
@@ -37,22 +40,30 @@ export default class App extends Component {
     NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
   }
 
+  componentWillUnmount() {
+    this._mounted = false;
+  }
+
   handleConnectivityChange = async (isConnected) => {
     console.log('HANDLECONNECTIVITYCHANGE: ', isConnected);
 
-    if (isConnected) {
+    if (isConnected && this._mounted) {
       await this.initBchain();
-      await execCachedTransactions();
+      // await execCachedTransactions();
     }
-    this.setState({ isConnected, loading: !isConnected });
+    !this.state.drinksVisible && this.setState({ isConnected, loading: !isConnected });
   };
 
   initBchain = async () => {
-    await initWeb3()
-      .catch(err => console.log('INITWEB3', err));
+    try {
+      await initWeb3()
+        .catch(err => console.log('INITWEB3', err));
 
-    await checkNewDeployment()
-      .catch(err => console.log('CHECKNEWDEPLOYMENT', err));
+      await checkNewDeployment()
+        .catch(err => console.log('CHECKNEWDEPLOYMENT', err));
+    } catch (error) {
+      console.log('initBchain: ', error);
+    }
   }
 
   submit = async (drinksProp) => {
@@ -77,14 +88,13 @@ export default class App extends Component {
 
   reloadInterface = async () => {
     console.log('RELOADINTERFACE');
-    this.setState({ drinksVisible: false, isVisible: false });
+    const isConnected = await NetInfo.isConnected.fetch();
+    this.setState({ drinksVisible: false, isVisible: false, isConnected, loading: !isConnected });
     this.forceRemount();
 
-    if (!this.state.isConnected) {
-      this.setState({ loading: true });
-    } else {
+    /*  if (this.state.isConnected) {
       await execCachedTransactions();
-    }
+    } */
   };
 
   next = (pickedAddress) => {
@@ -113,12 +123,14 @@ export default class App extends Component {
       uniqueValue, drinksVisible, isVisible, loading, isConnected,
     } = this.state;
 
+    const showLoader = loading && !drinksVisible;
+
     return (
       <View style={styles.container} key={uniqueValue}>
         <HeaderComp visible={drinksVisible} goBack={this.goBack} />
 
-        {!isConnected ? <OfflineText /> : null}
-        {!loading ? this.currentPage() : <ActivityComp />}
+        {!isConnected && !drinksVisible ? <OfflineText /> : null}
+        {showLoader ? <ActivityComp /> : this.currentPage()}
 
         <OverlayItem isVisible={isVisible} reloadInterface={this.reloadInterface} />
       </View>

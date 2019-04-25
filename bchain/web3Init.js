@@ -11,10 +11,10 @@ let prevBvgrlAddress;
 let downloadIP;
 
 async function initWeb3() {
-  // const ip = 'oc-appsrv01.informatik.uni-augsburg.de';
+  const ip = 'oc-appsrv01.informatik.uni-augsburg.de';
   // const ip = '10.0.2.2';
   // const ip = '192.168.188.23';
-  const ip = await getServerIP();
+  // const ip = await getServerIP();
   downloadIP = `http://${ip}:9090/files`;
 
   return web3.eth.net
