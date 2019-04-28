@@ -49,11 +49,7 @@ async function writeToBchain(drinkdata, gasAmount) {
 
   return !isConnected
     ? Promise.resolve()
-    : web3.eth.net.isListening()
-      .then(async () => {
-        await callSmartContract(drinkdata, gasAmount, path);
-      })
-      .catch(Promise.resolve);
+    : callSmartContract(drinkdata, gasAmount, path);
 }
 
 async function callSmartContract(drinkdata, gasAmount, path) {
@@ -64,19 +60,23 @@ async function callSmartContract(drinkdata, gasAmount, path) {
       resolve();
     }, 5000);
 
-    return deployedInstance.methods
-      .setDrinkData(fromAscii(time), drink, weekday)
-      .send({ from: address, gas: gasAmount })
-      .on('receipt', async (receipt) => {
-        printEvent(receipt);
-        await removeFile(path);
-        clearTimeout(tmout);
-        resolve();
+    web3.eth.net.isListening()
+      .then(() => {
+        deployedInstance.methods
+          .setDrinkData(fromAscii(time), drink, weekday)
+          .send({ from: address, gas: gasAmount })
+          .on('receipt', async (receipt) => {
+            printEvent(receipt);
+            await removeFile(path);
+            clearTimeout(tmout);
+            resolve();
+          })
+          .on('error', (err) => {
+            resolve();
+            console.log('setDrinkData error: ', err);
+          });
       })
-      .on('error', (err) => {
-        resolve();
-        console.log('setDrinkData error: ', err);
-      });
+      .catch(Promise.resolve);
   });
 }
 
@@ -85,10 +85,13 @@ async function execCachedTransactions(address) {
   const keys = await getAllFiles();
   const usrFiles = filterLocalFiles(keys, address);
   console.log('\n filterLocalFiles:', usrFiles);
+  const isConnected = await NetInfo.isConnected.fetch();
 
-  for (const filePath of usrFiles) {
-    const adrs = address || extractAddress(filePath);
-    await execTransaction(filePath, adrs);
+  if (isConnected) {
+    for (const filePath of usrFiles) {
+      const adrs = address || extractAddress(filePath);
+      await execTransaction(filePath, adrs);
+    }
   }
 }
 

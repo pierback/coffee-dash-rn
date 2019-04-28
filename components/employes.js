@@ -1,20 +1,20 @@
-import React, { Component } from "react";
-import { StyleSheet, View } from "react-native";
-import CardItem from "./cardItem";
+import React, { Component } from 'react';
+import { StyleSheet, View } from 'react-native';
+import CardItem from './cardItem';
 
-const personPic = require("../images/person.jpg");
+const personPic = require('../images/person.jpg');
 
 class Employes extends Component {
   constructor(props) {
     super(props);
     this.state = {
       names: {},
-      selected: null
+      selected: null,
     };
     ({ names: this.state.names } = this.props);
   }
 
-  onToggle = id => {
+  onToggle = (id) => {
     const { names } = this.state;
 
     const newSelection = Object.entries(names).reduce((acc, [key, val]) => {
@@ -43,10 +43,10 @@ class Employes extends Component {
           title={this.nameCapitalized(item)}
           style={{
             height: 220,
-            width: 150
+            width: 150,
           }}
         />
-      ))
+      )),
     );
   };
 
@@ -62,12 +62,12 @@ const styles = StyleSheet.create({
   cards: {
     marginTop: 10,
     flex: 1,
-    justifyContent: "space-around",
-    backgroundColor: "#F5FCFF",
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginBottom: 0
-  }
+    justifyContent: 'space-around',
+    backgroundColor: '#F5FCFF',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 0,
+  },
 });
 
 export default Employes;

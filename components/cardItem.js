@@ -10,7 +10,7 @@ class CardItem extends Component {
   getTransItemStyle = style => ({
     width: style.width + 15,
     height: style.height,
-    margin: 60,
+    margin: 30,
     marginBottom: 15,
     marginTop: 25,
     opacity: 0.5,
@@ -20,7 +20,7 @@ class CardItem extends Component {
   getOpcaItemStyle = style => ({
     width: style.width + 15,
     height: style.height,
-    margin: 60,
+    margin: 30,
     marginBottom: 15,
     marginTop: 25,
     opacity: 1.0,
