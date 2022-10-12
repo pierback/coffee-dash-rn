@@ -13,7 +13,7 @@
     "node-libs-browser": "^2.1.0",
     "process": "^0.11.10",
     "react": "16.6.0-alpha.8af6728",
-    "react-native": "0.55",
+    "react-native": "0.70",
     "react-native-swipe-navigation": "^1.0.0-beta",
     "web3": "1.0.0-beta.33"
   },
